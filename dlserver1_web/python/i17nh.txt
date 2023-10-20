@@ -1,0 +1,1 @@
+[{"modeltraining":1,"epoch":0,"model":"i17nh.h5","time":"2023/10/10-08:33:13","duration":"00:00:00"}]

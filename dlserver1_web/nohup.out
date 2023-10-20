@@ -1,0 +1,10 @@
+class_1
+完成旋转！
+完成曝光度调整并继续使用共享的递增数字！
+完成曝光度调整暗暗！
+Traceback (most recent call last):
+  File "/home/dlserver1/dlserver1_web/python/thepictest.py", line 137, in <module>
+    image = Image.open(input_path)
+  File "/usr/lib/python3/dist-packages/PIL/Image.py", line 2953, in open
+    fp = builtins.open(filename, "rb")
+FileNotFoundError: [Errno 2] No such file or directory: '/home/dlserver1/dlserver1_web/all/train/class_1/200_533_178_103_GB8023.png'

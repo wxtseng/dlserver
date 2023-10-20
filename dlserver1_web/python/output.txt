@@ -1,0 +1,1 @@
+[{"rank":1,"itype":"Fur","Similarity":"0.853"},{"rank":2,"itype":"Knit","Similarity":"0.147"},{"rank":3,"itype":"Checks","Similarity":"0.000"},{"rank":4,"itype":"Suede","Similarity":"0.000"},{"rank":5,"itype":"Twill","Similarity":"0.000"}]

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>布料材質辨識</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+  <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" />
+
+
+
+
+
+
+
+</head>
+<script>
+  //圖片搜尋
+  var jsonObjphoto = "";
+  var msgphoto = '';
+
+  $.ajax({
+    type: "post",
+    url: "./prg/photo.php",
+    success: function (result, status) {
+      jsonObjmap = JSON.parse(result);
+      msgphoto = msgphoto + `
+                <img src=`+ jsonObjmap[0]["picurl"] + ` class="rounded" alt="Cinque Terre" style="width: 60%;" onclick="oshowimg()">`;
+      $('#photodata').html(msgphoto);
+
+
+    }
+  });
+
+  function oshowimg() {
+    var msg = "";
+    //+++
+    msg = msg + '<img src=' + jsonObjmap[0]["picurl"] + '  class="rounded img-fluid" alt="...">';
+    //圖片預覽 & 重新上傳
+    $('#oimgmodle').html(msg);
+    var myModal = new bootstrap.Modal(document.getElementById('oexampleModal'), { keyboard: false });
+    myModal.show();
+  }
+  //圖片放大
+  //   function imgbig() {
+  //   var imgsrc = $('#imgsrc').attr('src');
+  //  $("#bigimg").css("display","block");
+  // $("#bigimg").html("<img src="+imgsrc+" />");
+  // }
+
+  // function closeimg() {
+  //    $("#bigimg").css("display","none");
+  // }
+
+  //製作表格
+  var lang = { "sSearch": "搜尋:", "sLengthMenu": "", "info": "顯示第 _START_ 至 _END_ 項結果，共 _TOTAL_ 項", "oPaginate": { "sFirst": "", "sPrevious": "", "sNext": "", "sLast": "", "sJump": "" } };
+
+  //var lang = { "sSearch": "搜尋:", "sLengthMenu": "顯示 _MENU_ 項結果", "info": "顯示第 _START_ 至 _END_ 項結果，共 _TOTAL_ 項", "oPaginate": { "sFirst": "首頁", "sPrevious": "上頁", "sNext": "下頁", "sLast": "末頁", "sJump": "跳轉" } };
+  $(function () {
+    $.ajax({
+      type: "post",
+      url: "./prg/thedata.php",
+      success: function (result, status) {
+        // var typedata = JSON.stringify(result);
+        var typedata = JSON.parse(result);
+        var userdata = [];
+        for (i = 0; i < typedata.length; i++) {
+          userdata[i] = [];
+          userdata[i][0] = typedata[i]["rank"];
+          userdata[i][1] = typedata[i]["itype"];
+          userdata[i][2] = typedata[i]["Similarity"];
+        }
+        datalenght = userdata.length;
+        objtab = $('#example').DataTable({
+          language: lang,
+          "autoWidth": false,
+          "lengthMenu": [5],
+          "searching": false,
+          "ordering": false,
+          "paging": false,
+          data: userdata,
+          columns: [
+            { title: "排序" },
+            { title: "類別" },
+            { title: "相似度" },
+            //{ data: 'rank' },
+            //{ data: 'itype' },
+            //{ data: 'Similarity' },
+          ],
+          responsive: {
+            breakpoints: [
+              { name: 'desktop', width: Infinity },
+              { name: 'tablet-l', width: 1024 },//原本是768~1024不含768
+              { name: 'tablet-p', width: 767 },//
+            ]
+          },
+
+          "columnDefs": [
+            {
+              targets: [0],
+              responsivePriority: 1,
+            }
+          ],
+        });
+      }
+    });
+
+  });
+
+  //表格圖片放大
+  function showimg(i) {
+    var msg = "";
+    //+++
+    msg = msg + "<img src='./backupimg/20230824013522.png'  class='rounded float-start' alt='...'>";
+    //圖片預覽 & 重新上傳
+    $('#imgmodle').html(msg);
+
+    var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), { keyboard: false });
+    myModal.show();
+  }
+
+
+
+
+</script>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  #imgdiv {
+    width: 30% auto;
+  }
+
+  #imgdiv img {
+    width: 20%;
+    margin: 0 100px;
+  }
+
+  #bigimg {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    background: rgba(0, 0, 0, .3);
+    top: 0;
+    display: none;
+  }
+
+  #bigimg img {
+    width: 20%;
+    margin: auto;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 40px;
+    cursor: pointer;
+  }
+
+  body {
+    background-color: #F3E9EA;
+
+  }
+
+  .title-color {
+    color: #303842;
+  }
+
+</style>
+
+<body>
+  <!--<div id="bigimg" onclick="closeimg();"></div>-->
+  <div class="container-fluid p-3 title-color text-center animate__animated animate__backInDown">
+    <h1 style="font-weight:bold;">布料材質辨識</h1>
+    <ul class="nav justify-content-center nav-pills">
+      <li class="nav-item">
+        <a class="nav-link active" style="background-color: #cbd690; color: black; font-weight:bold;" aria-current="page" href="./index.html">返回首頁</a>
+      </li>
+    </ul>
+    
+    <p></p>
+  </div>
+
+  <div class="container-fluid pb-4">
+
+  </div>
+
+  <div class="container-fluid table-responsive">
+    <div class="row">
+
+      <div class="col-md-6 text-center  animate__animated animate__backInLeft">
+        <!-- 放大遮罩层 -->
+        <p style=" color: black; font-weight:bold;">上傳的原圖</p>
+        <div id="photodata"></div>
+      </div>
+
+      <div class="col-md-6 table-responsive animate__animated animate__backInRight ">
+        <table class="table table-hover " id="example">
+          <thead>
+            <tr class="table-info">
+              <th style="width: 20%;">排序</th>
+              <th style="width: 40%;">類別</th>
+              <th style="width: 40%;">相似度</th>
+            </tr>
+          </thead>
+          <tbody id="databody">
+
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <!-- 原圖Modal -->
+  <div class="modal fade" id="oexampleModal" tabindex="-1" aria-labelledby="oexampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" style="margin: 0 auto;" id="oexampleModalLabel">上傳圖片</h5>
+        </div>
+        <div class="modal-body" style="margin: 0 auto;">
+          <div id="oimgmodle"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 比對圖Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" style="margin: 0 auto;" id="exampleModalLabel">Modal title</h5>
+        </div>
+        <div class="modal-body" style="margin: 0 auto;">
+          <div id="imgmodle"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>

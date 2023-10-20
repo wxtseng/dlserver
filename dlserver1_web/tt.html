@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>進度條</title>
+    <style>
+        #progress-container {
+            width: 100%;
+            background-color: #f2f2f2;
+            padding: 10px;
+        }
+
+        #progress-bar {
+            width: 0;
+            height: 30px;
+            background-color: #4caf50;
+            transition: width 0.5s;
+        }
+
+        #data-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <script> 
+    function updateData() {
+        fetch('../prg/newtxt.php') // 最新txt
+            .then(response => response.json())
+            .then(data => {
+                const latestFile = data.latest_file;
+                document.getElementById('latestFile').textContent = latestFile;
+                    
+                // 指定要讀取的文字檔案路徑
+                var filePath = '../python/' + latestFile;
+
+
+                // 取得進度條和資料容器的元素
+                var progressBar = document.getElementById('progress-bar');
+                var dataContainer = document.getElementById('data-container');
+                var datarun = document.getElementById('datarun');
+                datarun.innerHTML = ' 訓練中...';
+                // 更新文字檔案的內容
+               
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', filePath, true);
+
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            // 取得到最新的數據
+                            var str = JSON.parse(xhr.responseText);
+                            var ep = str[0].epoch
+                            var ep1 = str[1].epoch
+
+                            if (ep !== ep1) {
+                                fetch(filePath)
+                                    .then(response => response.text())
+                                    .then(data => {
+                                        var lines = data.split('}');
+                                        var totalLines = lines.length;
+                                        var currentIndex = 0;
+
+                                        // 更新進度條和顯示數據
+                                        function updateProgress() {
+
+                                            if (currentIndex < totalLines) {
+                                                // 計算當前進度並更新進度條
+                                                var progress = (currentIndex / totalLines) * 100;
+                                                progressBar.style.width = progress + '%';
+                                                // 增加索引以載入下一數據
+                                                currentIndex++;
+                                                dataContainer.innerHTML = (currentIndex - 1) + '/50 訓練中';
+
+                                                // 每隔一段時間更新一次進度
+                                                setTimeout(updateProgress, 5000);
+                                            }
+                                        }
+                                        updateProgress();
+                                    })
+                                    .catch(error => {
+                                        console.error('無法載入文件：', error);
+                                    });
+                            }
+                            var ep2 = str[2].epoch
+                            if (ep2 = 2) {
+                                progressBar.style.display = 'none';
+                                dataContainer.style.display = 'none';
+                                datarun.style.display = 'none';
+
+                            }
+                        }
+                    };
+                    xhr.send();
+                    })
+            .catch(error => {
+                console.error('發生錯誤：', error);
+            });
+                    
+                }
+
+                // 初始載入數據
+                updateData();
+                setInterval(updateData, 5000); // 5000毫秒（5秒）刷新一次
+
+                // 初始化進度條狀態
+                progressBar.style.width = '5%';
+           
+    </script>
+
+
+    <h1>進度條</h1>
+    <div id="progress-container">
+        <div id="progress-bar"></div>
+    </div>
+    <div id="data-container"></div>
+    <div id="datarun"></div>
+
+    <p id="latestFile"></p>
+</body>
+
+</html>

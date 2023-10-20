@@ -1,0 +1,1 @@
+"[{\"value\":\"class_1\"},{\"value\":\"class_2\"}]"

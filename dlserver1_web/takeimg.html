@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>webrtc testing</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+		integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+		crossorigin="anonymous"></script>
+  <script src="./js/adaper.js"></script>
+  <script src="./js/main2.js"></script>
+  <script>
+      $(function(){
+        getdevice();
+        $('#mycamera1').width($('#showarea').width());
+        $('#mycamera1').height($('#showarea').width()*3/4);
+
+        $('#takeimg1').width($('#showarea').width());
+        $('#takeimg1').height($('#showarea').width()*3/4);
+
+        
+        $('#cam1').click(function(event){             
+            init0(event);
+            
+        });
+
+        $('#takebtn').click(function(){
+            $('#takeimg1')[0].getContext('2d').drawImage($('#mycamera1')[0], 0, 0,224,224);
+            takeimg();
+        });
+
+       
+
+        $('#dlbtn').click(function(){
+          downloadblob();
+        });
+        $('#upload').click(function () {
+				$('#inflist').append("<li>上傳網路伺服器</li>");
+				uploadblob();
+
+				//  $('#inflist').append("<li>轉檔中請稍後</li>");
+				if ($("#picurl").val() != "") {
+					var name = $("#picurl").val();
+					//var maccount =$("#maccount").val();
+
+
+					$.ajax({
+						type: "POST",//post or get
+						url: "./prg/addname.php",//使用的PHP
+						data: {
+              picurl: $("#picurl").val()
+						},
+						success: function (res, status) {
+							//alert(res);
+							//alert(status);
+							var jsonObj = JSON.parse(res);
+							if (jsonObj[0] == true) {
+								sessionStorage.setItem("status", jsonObj[0]);
+								sessionStorage.setItem("picurl", jsonObj[1]);
+							}
+							else alert("資料輸入有誤!");
+						}
+					});
+
+
+				} else alert("尚有未輸入資料!請重新再來一次")
+
+			});
+                    
+      });
+  </script>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="row my-1">
+      
+  </div>
+  <div class="row">
+    <div class="col">
+      <h4>攝影機一</h4>
+    </div>
+    <div class="col">
+      <h4>攝影機一拍照</h4>
+    </div>
+
+  </div>
+  <div class="row">
+      <div class="col-4" id="showarea">
+        <video id="mycamera1"  width="224" height="224" controls autoplay playsinline></video>
+      </div>
+      <div class="col-4">        
+        <canvas id="takeimg1" width="224" height="224"></canvas>
+      </div>
+  </div>
+
+  <div class="row my-1"></div>
+  <div class="row">
+      <div class="col">
+        <button class="btn btn-warning" id="cam1">開啟第一攝影機</button>
+        <button class="btn btn-warning" id="takebtn">拍照</button>       
+      
+      <button type="button" class="btn btn-success" data-bs-toggle="modal"
+      data-bs-target="#myModal">上傳伺服器</button>
+      </div>
+
+    <div class="modal fade" id="myModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">影片建立</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            影片命名 : <input type="text" id="name" name="name" />
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="upload"
+              name="upload">建立</button>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+</body>
+</html>

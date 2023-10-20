@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>布料材質辨識</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" />
+
+    <!-- Bootstrap icon -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+
+
+</head>
+<script>
+    //var classsize = 0;
+    var clickaddclass = 0;
+
+    //remove class
+    function delclass(classnum) {
+        //alert(classnum);
+        if (clickaddclass == 8) {
+            clickaddclass = clickaddclass - 1;
+            $("#card" + classnum + "").remove();
+            $("#addclass").removeAttr('disabled');
+            $("#addclass").html("新增類別");
+            //alert(clickaddclass+'33');
+
+        }
+        else {
+            clickaddclass = clickaddclass - 1;
+            $("#card" + classnum + "").remove();
+            //alert(clickaddclass+'44');
+        }
+
+    }
+
+    $(document).ready(function () {
+
+        //新增類別數，最多10類
+        var classnum = 2;
+
+        $("#addclass").click(function () {
+            if (clickaddclass == 7) {
+                var addclassbody = "";
+                classnum = classnum + 1;
+                addclassbody = addclassbody + '<div id="card' + classnum + '" class="card  col-md-2 mt-3 mx-3" id="cardclassbody">';
+                addclassbody = addclassbody + '<div class="card-header">';
+                addclassbody = addclassbody + '<div class="row">';
+                addclassbody = addclassbody + '<input class="inputupdate col-8" id="input_' + classnum + '" value="class_' + classnum + '">';
+                addclassbody = addclassbody + '<i class="bi bi-pencil-square focus-input col-1 mx-3" data-target="input_' + classnum + '"></i>';
+                addclassbody = addclassbody + '<i class="bi bi-x-square col-1" id="delclass_' + classnum + '" value="刪除此類別" onclick="delclass(' + classnum + ')"></i>';
+                addclassbody = addclassbody + '</div>';
+                addclassbody = addclassbody + '<div class="row mt-3">';
+                addclassbody = addclassbody + '<div class="col-9" id="imageCount_' + classnum + '">已上傳圖片數量: 0</div>'
+                addclassbody = addclassbody + '<input class="col-3 btn btn-outline-danger" type="button" id="clear_' + classnum + '" value="清空">';
+                addclassbody = addclassbody + '</div>';
+                addclassbody = addclassbody + '</div>';
+                addclassbody = addclassbody + '<div class="card-body">';
+                addclassbody = addclassbody + '<form enctype="multipart/form-data">';
+                addclassbody = addclassbody + '<input class="fileInputstyle mb-2" name="files[input_' + classnum + ']" type="file" id="fileInput_' + classnum + '" multiple accept="image/*">';
+                addclassbody = addclassbody + '</from>';
+                addclassbody = addclassbody + '<div class="imageContainerstyle" id="imageContainer_' + classnum + '"></div>';
+                addclassbody = addclassbody + ' </div>';
+                addclassbody = addclassbody + '</div>';
+                $("#cardclassbody").append(addclassbody);
+                $("#addclass").attr('disabled', 'disabled');
+                $("#addclass").html("類別已達上限");
+                clickaddclass = clickaddclass + 1;
+                //alert(clickaddclass+'22');
+
+            }
+            else {
+                var addclassbody = "";
+                classnum = classnum + 1;
+                addclassbody = addclassbody + '<div id="card' + classnum + '" class="card  col-md-2 mt-3 mx-3" id="cardclassbody">';
+                addclassbody = addclassbody + '<div class="card-header">';
+                addclassbody = addclassbody + '<div class="row">';
+                addclassbody = addclassbody + '<input class="inputupdate col-8" id="input_' + classnum + '" value="class_' + classnum + '">';
+                addclassbody = addclassbody + '<i class="bi bi-pencil-square focus-input col-1 mx-3" data-target="input_' + classnum + '"></i>';
+                addclassbody = addclassbody + '<i class="bi bi-x-square col-1" id="delclass_' + classnum + '" value="刪除此類別" onclick="delclass(' + classnum + ')"></i>';
+                addclassbody = addclassbody + '</div>';
+                addclassbody = addclassbody + '<div class="row mt-3">';
+                addclassbody = addclassbody + '<div class="col-9" id="imageCount_' + classnum + '">已上傳圖片數量: 0</div>'
+                addclassbody = addclassbody + '<input class="btn btn-outline-danger col-3" type="button" id="clear_' + classnum + '" value="清空">';
+                addclassbody = addclassbody + '</div>';
+                addclassbody = addclassbody + '</div>';
+                addclassbody = addclassbody + '<div class="card-body">';
+                addclassbody = addclassbody + '<form enctype="multipart/form-data">';
+                addclassbody = addclassbody + '<input class="fileInputstyle mb-2" name="files[input_' + classnum + ']" type="file" id="fileInput_' + classnum + '" multiple accept="image/*">';
+                addclassbody = addclassbody + '</from>';
+                addclassbody = addclassbody + '<div class="imageContainerstyle" id="imageContainer_' + classnum + '"></div>';
+                addclassbody = addclassbody + ' </div>';
+                addclassbody = addclassbody + '</div>';
+                $("#cardclassbody").append(addclassbody);
+                clickaddclass = clickaddclass + 1;
+                //alert(clickaddclass+'11');
+            }
+        })
+        //點擊筆跳至編輯class框
+        $(document).on('click', '.focus-input', function () {
+            var targetInputId = $(this).data('target');
+            $('#' + targetInputId).focus();
+        });
+
+        // 處理多個文件輸入框
+        var uploadedImagesCounts = {};
+        $(document).on('change', '[id^="fileInput_"]', function (e) {
+            console.log(document.querySelector('[id^="fileInput_"]').files);
+            var inputId = this.id;
+            var containerId = inputId.replace('fileInput', 'imageContainer');
+            if (!uploadedImagesCounts[containerId]) {
+                uploadedImagesCounts[containerId] = 0;
+            }
+            var files = e.target.files;
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                /*var filesize = files[i]['size'] / 1024;
+                classsize += filesize;
+                console.log(classsize);*/
+
+                if (!file.type.startsWith('image/')) {
+                    alert('請上傳圖片格式檔案！');
+                    continue;
+                }
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var image = document.createElement('img');
+                    image.src = e.target.result;
+                    image.className = 'col-12 col-md-6 col-lg-4 image-zoom';
+
+                    $('#' + containerId).append(image);
+
+                    uploadedImagesCounts[containerId]++;
+                    $('#' + containerId.replace('imageContainer', 'imageCount')).text('已上傳圖片數量: ' + uploadedImagesCounts[containerId]);
+                    $(image).hover(function () {
+                        // Mouse over - apply zoom effect
+                        $(this).addClass('image-zoom-hover');
+                    }, function () {
+                        // Mouse out - remove zoom effect
+                        $(this).removeClass('image-zoom-hover');
+                    });
+                };
+
+                reader.readAsDataURL(file);
+            }
+
+        });
+
+        //remove class images
+        $(document).on('click', '[id^="clear_"]', function (e) {
+            var buttonId = this.id; // 抓按鈕ID
+            var containerId = buttonId.replace('clear_', 'imageContainer_');
+            uploadedImagesCounts[containerId] = 0;
+            $('#' + containerId.replace('imageContainer', 'imageCount')).text('已上傳圖片數量: ' + uploadedImagesCounts[containerId]);
+            // 清空對應imageContainer
+            $('#' + containerId).empty();
+
+            // 可重新選擇相同檔案
+            var fileInputId = buttonId.replace('clear_', 'fileInput_');
+            var fileInput = document.getElementById(fileInputId);
+            fileInput.value = ""; // 清空檔案輸入的值，可上傳相同檔案
+        });
+
+        $("#starttrain").click(function () {
+            var categories = [];
+            $('[id^="input_"]').each(function () {
+                var categoryValue = $(this).val();
+                categories.push({ value: categoryValue });
+            });
+            var check = 0;
+            var formData = new FormData();
+            formData.append('categories', JSON.stringify(categories));
+            $('[id^="fileInput_"]').each(function () {
+                var inputId = this.id;
+                var files = this.files;
+                var className = $('#input_' + inputId.split('_')[1]).val();
+                if (files.length > 0) {
+                    for (var i = 0; i < files.length; i++) {
+                        formData.append(className + '[]', files[i]);
+                    }
+                    check = 1;
+
+                }
+                else {
+                    alert(className + "欄位請選擇檔案")
+                    check = 0;
+                }
+
+            });
+            if (check == 1) {
+                $.ajax({
+                    url: './prg/starttrain.php',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        console.log(response);
+
+                        alert("已類別上傳成功");
+
+                    },
+                    error: function (error) {
+                        console.error(error);
+                        alert("上傳失敗");
+                    }
+                });
+
+            } 
+            else {
+                alert("上傳失敗");
+
+            }
+
+        });
+
+
+
+    })
+
+
+    //
+
+
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const trainbut = document.getElementById('trainbut');
+
+        function updateData() {
+            fetch('../prg/newtxt.php') // 最新txt
+                .then(response => response.json())
+                .then(data => {
+                    const latestFile = data.latest_file;
+                    //document.getElementById('latestFile').textContent = latestFile;
+
+                    // 指定要讀取的文字檔案路徑
+                    var filePath = '../python/model/' + latestFile;
+
+
+                    // 取得進度條和資料容器的元素
+                    var progressBar = document.getElementById('progress-bar');
+                    var dataContainer = document.getElementById('data-container');
+                    var datarun = document.getElementById('datarun');
+                    var datatime = document.getElementById('datatime');
+                    datarun.innerHTML = ' 訓練中...';
+                    // 更新文字檔案的內容
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', filePath, true);
+
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            // 取得到最新的數據
+                            var str = JSON.parse(xhr.responseText);
+                            var ep = str[0].epoch
+                            var ep1 = str[1].epoch
+
+                            if (ep !== ep1) {
+                                fetch(filePath)
+                                    .then(response => response.text())
+                                    .then(data => {
+                                        var lines = data.split('}');
+                                        var totalLines = lines.length;
+                                        var currentIndex = 0;
+
+                                        // 更新進度條和顯示數據
+                                        function updateProgress() {
+
+                                            if (currentIndex < totalLines) {
+                                                // 計算當前進度並更新進度條
+                                                var progress = (currentIndex / totalLines) * 100;
+                                                progressBar.style.width = progress + '%';
+                                                // 增加索引以載入下一數據
+                                                currentIndex++;
+                                                dataContainer.innerHTML = (currentIndex - 1) + '/50 訓練中';
+
+                                                // 每隔一段時間更新一次進度
+                                                setTimeout(updateProgress, 5000);
+                                            }
+                                        }
+                                        updateProgress();
+                                    })
+                                    .catch(error => {
+                                        console.error('無法載入文件：', error);
+                                    });
+                            }
+                            var ep2 = str[9].epoch //str[49].epoch
+                            if (ep2 = 9) { //ep2 = 49
+                                progressBar.style.display = 'none';
+                                dataContainer.style.display = 'none';
+                                datarun.style.display = 'none';
+
+                            }
+                        }
+                    };
+                    xhr.send();
+                })
+                .catch(error => {
+                    console.error('發生錯誤：', error);
+                });
+
+
+            $.ajax({
+                type: "post",
+                url: "./prg/tringup.php",
+                success: function (result, status) {
+                    // var typedata = JSON.stringify(result);
+                    var typedata = JSON.parse(result);
+                    var userdata = [];
+                    for (i = 0; i < typedata.length; i++) {
+                        userdata[i] = [];
+                        userdata[i][0] = typedata[i]["modeltraining"];
+                        userdata[i][1] = typedata[i]["epoch"];
+                        userdata[i][2] = typedata[i]["model"];
+                        userdata[i][3] = typedata[i]["time"];
+                        userdata[i][4] = typedata[i]["duration"];
+                        datatime.innerHTML = userdata[i][4];
+                    }
+                    datalenght = userdata.length;
+                }
+            });
+            $('#trainModal').modal('show');
+
+        }
+
+        function outerFunction() {
+            // 初始載入數據
+            updateData();
+            setInterval(updateData, 5000); // 5000毫秒（5秒）刷新一次
+
+            // 初始化進度條狀態
+            //progressBar.style.width = '5%';
+
+
+        }
+        trainbut.addEventListener('click', outerFunction);
+    });
+</script>
+<style>
+    .inputupdate {
+        border-bottom: 1px solid #dbdbdb;
+        border-top: 0px;
+        border-left: 0px;
+        border-right: 0px;
+    }
+
+    .card-header {
+        background-color: transparent;
+    }
+
+    .imageContainerstyle {
+        height: 200px;
+        overflow-y: scroll;
+    }
+
+    .fileInputstyle {
+        color: transparent;
+    }
+
+    body {
+        background-color: #F3E9EA;
+    }
+
+    .btn-color {
+        background-color: #303842;
+
+    }
+
+
+    #progress-container {
+        width: 100%;
+        background-color: #f2f2f2;
+        padding: 10px;
+    }
+
+    #progress-bar {
+        width: 0;
+        height: 30px;
+        background-color: #4caf50;
+        transition: width 0.5s;
+    }
+
+    #data-container {
+        margin-top: 20px;
+    }
+
+    .image-zoom {
+        transition: transform 0.3s ease;
+    }
+
+    .image-zoom:hover {
+        transform: scale(1.5);
+        transform-origin: center center;
+    }
+</style>
+
+<body>
+    <!--<div id="bigimg" onclick="closeimg();"></div>-->
+    <div class="container-fluid  title-color text-center animate__animated animate__backInDown">
+        <h1 style="font-weight:bold;">布料材質辨識</h1>
+        <ul class="nav justify-content-center nav-pills">
+            <li class="nav-item">
+                <a class="nav-link" style="font-weight:bold; color: black;" href="./index.html">圖片辨識網站</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" style="background-color: #cbd690; color: black; font-weight:bold;"
+                    aria-current="page" href="./index.html">圖片訓練網站</a>
+            </li>
+        </ul>
+        <!--<ul class="nav justify-content-center nav-pills">
+            <li class="nav-item">
+                <a class="nav-link active" style="background-color: #cbd690; color: black; font-weight:bold;"
+                    aria-current="page" href="./index.html">返回首頁</a>
+            </li>
+        </ul>-->
+        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">說明</button>
+
+    </div>
+
+
+    <div class="container-fluid table-responsive justify-content-center animate__animated animate__backInUp">
+        <div class="row">
+            <div class="col">
+                <div class="row justify-content-center" id="cardclassbody">
+                    <div class="card col-md-2  mt-3 mx-3">
+                        <div class="card-header">
+                            <div class="row">
+                                <input class="inputupdate col-8" id="input_1" value="class_1">
+                                <i class="bi bi-pencil-square focus-input col-4" data-target="input_1"></i>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-9" id="imageCount_1">已上傳圖片數量: 0</div>
+                                <input class="col-3 btn btn-outline-danger" type="button" id="clear_1" value="清空">
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form enctype="multipart/form-data">
+                                <input class="fileInputstyle mb-2" name="files['input_1']" type="file" id="fileInput_1"
+                                    multiple accept="image/*">
+                            </form>
+                            <div class="imageContainerstyle" id="imageContainer_1"></div>
+                        </div>
+                    </div>
+
+                    <div class="card col-md-2 mt-3 mx-3">
+                        <div class="card-header">
+                            <div class="row">
+                                <input class="inputupdate col-8" id="input_2" value="class_2">
+                                <i class="bi bi-pencil-square focus-input col-4" data-target="input_2"></i>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-9" id="imageCount_2">已上傳圖片數量: 0</div>
+                                <input class="col-3 btn btn-outline-danger" type="button" id="clear_2" value="清空">
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form enctype="multipart/form-data">
+                                <input class="fileInputstyle mb-2 " name="files['input_2']" type="file" id="fileInput_2"
+                                    multiple accept="image/*">
+                            </form>
+                            <div class="imageContainerstyle" id="imageContainer_2"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+            </div>
+
+            <div class="row justify-content-center ">
+                <button class="btn btn-secondary btn-color col-md-3 mx-3 mt-2" type="button" id="addclass">新增類別</button>
+                <button class="btn btn-secondary btn-color col-md-3 mx-3 mt-2" type="button"
+                    id="starttrain">開始訓練</button>
+                <button class="btn btn-secondary btn-color col-md-3 mx-3 mt-2" type="button" id="trainbut">測試訓練</button>
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+    <!--<div class="container-fluid table-responsive justify-content-center mt-3">
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        <div id="data-container"></div>
+        <div id="datatime"></div>
+        <div id="datarun"></div>
+
+
+        <p id="latestFile"></p>
+    </div> -->
+    <!-- 說明Modal -->
+    <div class="modal fade" id="trainModal" tabindex="-1" aria-labelledby="trainModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h1 class="modal-title fs-5" id="trainModallable">測試訓練</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="progress-container">
+                        <div id="progress-bar"></div>
+                    </div>
+                    <div id="data-container"></div>
+                    <div id="datatime"></div>
+                    <div id="datarun"></div>
+                    <p id="latestFile"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 說明Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">使用說明</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li>類別上限為10類</li>
+                        <li>每張圖片限制大小最多為20kb</li>
+                        <li>類別名稱不能為中文或特殊符號</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>

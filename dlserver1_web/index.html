@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>布料材質辨識</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<script>
+  //圖片預覽
+    var loadFile = function(event) {
+    var output = document.getElementById('output');
+    output.src = URL.createObjectURL(event.target.files[0]);
+    output.onload = function() {
+      URL.revokeObjectURL(output.src) // free memory
+    }
+  };
+  //上傳圖片
+  function uploaddata() {
+                    if($("#imgfn").val()!=""){
+                        
+                        //跑計時器
+                        var timer = document.querySelector("#timer");
+                        var number = 5;
+                        var msg = "";
+                        setInterval(function(){
+                          number -- ;
+                          if(number <= 0 )
+                            number = 0;
+                          timer.innerText = number + 0 }, 1000);
+                          //+++
+                          var myModal = new bootstrap.Modal(document.getElementById('timeModal'), { keyboard: false });
+                          myModal.show();
+                        //
+                        var schfd = new FormData();
+                        //schfd.append('ename', $('#ename').val());
+                        schfd.append('imgfn', $('#imgfn')[0].files[0]);  
+                        $.ajax({
+                                type: "post",
+                                url: "./prg/madehtml2.php",
+                                data:schfd,
+                                processData: false,
+                                contentType: false,
+                                success: function (result, status) {
+                                    var obj = "";
+                                    obj = JSON.parse(result);
+                                    if( obj[0] == true){
+                                      alert(obj[1]);
+                                      var url = "./Idresult.html";
+                                      //alert(obj[2]);
+                                      //alert(obj[3]);
+                                      window.location.replace(url);
+                                    }
+                                    else{
+                                      alert(obj[1]);
+                                    }
+                                }
+                            });
+                    }else
+                        alert("NONO");
+                }
+function cleclean(){
+  window.location.replace("./index.html");
+}
+</script>
+<style>
+  body{
+    background-color: #F3E9EA;
+
+  }
+  .img{
+    width: 50%;
+  }
+  .title-color{
+    color:#303842; 
+  }
+  .btn-color{
+    background-color: #303842;
+
+  }
+</style>
+
+<body>
+
+<div class="container-fluid p-3 title-color text-center animate__animated animate__backInDown">
+  <h1 style="font-weight:bold;">布料材質辨識</h1>
+  <ul class="nav justify-content-center nav-pills">
+    <li class="nav-item">
+      <a class="nav-link active" style="background-color: #cbd690; color: black; font-weight:bold;" aria-current="page" href="./index.html">檔案上傳</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" style="font-weight:bold; color: black;" href="./takephoto.html">拍照上傳</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" style="font-weight:bold; color: black;" href="./demo.html">圖片訓練網站</a>
+    </li>
+  </ul>
+  <p></p> 
+</div>
+
+
+
+
+<div class="container mt-1 animate__animated animate__backInUp">
+  <div class="row">
+    <div class="col-2">
+    </div>
+    <div class="col-8 text-center">
+      
+      <div class="card text-center" >
+        <div class="card-body">
+      
+          <div class="row">
+            <div class="col-2">
+            </div>
+            <div class="col-8">
+              <img style="width: 70%;" id="output"/>
+            </div>
+            <div class="col-2">
+            </div>
+          </div>
+
+          <div class="row">
+                <div class="col-2">
+                </div>
+                <span class="col-8" style="color: black; font-weight:bold;">選擇上傳圖片</span>
+                <div class="col-2">
+                </div>
+          </div>
+                <div class="row my-2 mx-3">      
+                  <input id="imgfn" type="file" class="form-control" style="font-weight:bold;" accept="image/gif, image/jpeg, image/png" onchange="loadFile(event)" />
+                </div>
+                    
+                </div>
+
+                <div class="row mx-3 mb-2">
+                  <button onclick="uploaddata()"
+                    class="btn btn-secondary btn-color" style="color: rgb(255, 255, 255); font-weight:bold;">上傳圖片
+                </button>
+                </div>
+                
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-2">
+    </div>
+  </div>
+</div>
+
+
+<!-- 倒數Modal -->
+<div class="modal fade" id="timeModal" tabindex="-1" aria-labelledby="timeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" style="margin: 0 auto; font-weight:bold; color: black;" id="timeModalLabel">系統正在辨識檔案中</h5>
+      </div>
+      <div class="modal-body" style="margin: 0 auto;">
+        <div class="d-flex align-items-center">
+          <div class="spinner-border spinner-border-sm m-2" role="status"></div><strong class="pe-3" style="font-weight:bold;">Loading...</strong><div id="timer" style="font-weight:bold;">5</div>
+          
+        </div>
+        
+      </div>
+      <div class="modal-footer">
+       <button type="button" class="btn btn-secondary" style="color: rgb(255, 255, 255); font-weight:bold;"  data-bs-dismiss="modal"  onclick="cleclean()" >取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

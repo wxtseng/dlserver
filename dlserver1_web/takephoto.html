@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>布料材質辨識</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="./js/mainphone.js"></script> 
+
+
+</head>
+<script>
+  function setupCamera() {
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+    .then(function (stream) {
+      $('#mycamera1')[0].srcObject = stream;
+    })
+    .catch(function (error) {
+      console.error('訪問摄像头失败：', error);
+    });
+}
+
+// 在初始化时调用函数以设置摄像头
+// 定义全局变量来存储Canvas元素和Blob对象
+var canvas = null;
+var blob = null;
+  //拍照上傳
+  $(function(){
+    getdevice();
+    setupCamera();
+
+    //init0(event);
+        $('#mycamera1').width($('#showarea').width());
+        $('#mycamera1').height($('#showarea').width()*3/4);
+
+        $('#takeimg1').width($('#showarea').width());
+        $('#takeimg1').height($('#showarea').width()*3/4);          
+
+        $('#takebtn').click(function(){
+            $('#takeimg1')[0].getContext('2d').drawImage($('#mycamera1')[0], 0, 0,224,224);
+            canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = 224;
+        canvas.height = 224;
+        context.drawImage($('#mycamera1')[0], 0, 0, 224, 224);
+        // 将Canvas上的图像数据转换为Blob对象
+        canvas.toBlob(function (resultingBlob) {
+            if (resultingBlob) {
+                blob = resultingBlob;
+                alert('圖像已捕獲');
+            } else {
+                alert('無法獲取圖像數據');
+            }
+        }, 'image/png');
+        });         
+      });
+  //上傳圖片
+  function uploadphoto() {
+    if (blob) {
+        // 创建FormData对象
+        //跑計時器
+        var timer = document.querySelector("#timer");
+                        var number = 17;
+                        var msg = "";
+                        setInterval(function(){
+                          number -- ;
+                          if(number <= 0 )
+                            number = 0;
+                          timer.innerText = number + 0 }, 1000);
+                          //+++
+                          var myModal = new bootstrap.Modal(document.getElementById('timeModal'), { keyboard: false });
+                          myModal.show();
+                        //
+        const formData = new FormData();
+        formData.append('imgfn', blob, 'image.png');
+        
+        // 发送Ajax请求
+        $.ajax({
+            type: 'POST',
+            url: './prg/madephoto.php', // 请替换为你的服务器端处理脚本的URL
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (result, status) {
+                var obj = "";
+                obj = JSON.parse(result);
+                if( obj[0] == true){
+                  alert(obj[1]);
+                  var url = "./Idresult.html";
+                  //alert(obj[2]);
+                  //alert(obj[3]);
+                  window.location.replace(url);
+                }
+                else{
+                  alert(obj[1]);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+                alert('上傳失敗');
+            }
+        });
+    } else {
+        alert('請先以照片捕獲圖像');
+    }
+  }
+function cleclean(){
+  window.location.replace("./takephoto.html");
+}
+</script>
+<style>
+  body{
+    background-color: #F3E9EA;
+
+  }
+  .img{
+    width: 50%;
+  }
+  .title-color{
+    color:#303842; 
+  }
+  .btn-color{
+    background-color: #303842;
+
+  }
+</style>
+
+<body>
+
+<div class="container-fluid title-color m-1 text-center animate__animated animate__backInDown">
+  <h1 style="font-weight:bold;">布料材質辨識</h1>
+  <ul class="nav justify-content-center nav-pills">
+    <li class="nav-item">
+      <a class="nav-link " style="font-weight:bold; color: black;" href="./index.html">檔案上傳</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active" style="background-color: #cbd690; color: black; font-weight:bold;" aria-current="page" href="./takephoto.html">拍照上傳</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" style="font-weight:bold; color: black;" href="./demo.html">圖片訓練網站</a>
+    </li>
+  </ul>  
+  <p></p> 
+</div>
+  
+
+
+
+
+<div class="container mt-1 animate__animated animate__backInUp">
+  <div class="row">
+
+        <div class="col-md-6 text-center">
+          <span class="" style="color: black; font-weight:bold;">拍攝上傳圖片鏡頭</span>
+            <div class="card " >
+              <div class="card-body">
+                <div class="row">
+                      <div class="col-2">
+                      </div>
+                      
+                      <div>      
+                        <video id="mycamera1"  width="224" height="224" controls autoplay playsinline></video>
+                      </div>       
+                      <div class="col-2">
+                      </div>
+                </div>
+                        
+              </div>
+                      <div class="row mx-3">
+                        <button class="btn btn-warning mb-2" id="takebtn" style="color: black; font-weight:bold;">拍照</button> 
+                        <button onclick="uploadphoto()"
+                        class="btn btn-secondary btn-color mb-2" style="color: rgb(255, 255, 255); font-weight:bold;">上傳圖片
+                    </button>      
+                      </div>
+                </div>
+          </div>
+
+          <div class="col-md-6 text-center">
+            <span style="color: black; font-weight:bold;">上傳拍攝圖片</span>
+            <div class="card " >
+              <div class="card-body">
+                <div class="row">
+                      <div class="col-2">
+                      </div>
+                      <div id="showarea">      
+                        <canvas id="takeimg1" width="224" height="224"></canvas>
+                   </div> 
+                      <div class="col-2">
+                      </div>
+                </div>
+                              
+              </div>
+        
+            </div>
+          </div>
+    </div>
+    
+</div>
+
+    
+
+<!-- 倒數Modal -->
+<div class="modal fade" id="timeModal" tabindex="-1" aria-labelledby="timeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" style="margin: 0 auto; font-weight:bold; color: black;" id="timeModalLabel">系統正在辨識檔案中</h5>
+      </div>
+      <div class="modal-body" style="margin: 0 auto;">
+        <div class="d-flex align-items-center">
+          <div class="spinner-border spinner-border-sm m-2" role="status"></div><strong class="pe-3" style="font-weight:bold;">Loading...</strong><div id="timer" style="font-weight:bold;">17</div>
+          
+        </div>
+        
+      </div>
+      <div class="modal-footer">
+       <button type="button" class="btn btn-secondary" style="color: rgb(255, 255, 255); font-weight:bold;"  data-bs-dismiss="modal"  onclick="cleclean()" >取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
